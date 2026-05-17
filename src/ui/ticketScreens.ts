@@ -14,7 +14,12 @@ import {
 
 function printTicketRow(ticket: TicketDto, index?: number): void {
   const prefix = index !== undefined ? `${index + 1}. ` : "   ";
-  const status = ticket.isReturned ? "[ПОВЕРНЕНО]" : "[АКТИВНИЙ]";
+  const isPast = ticket.showDate < new Date();
+  const status = ticket.isReturned
+    ? "[ПОВЕРНЕНО]"
+    : isPast
+      ? "[ВИСТАВА ПРОЙШЛА]"
+      : "[АКТИВНИЙ]";
   printLine(`${prefix}[${ticket.id.slice(0, 8)}] ${status}`);
   printLine(
     `   Вистава: "${ticket.showTitle}" - ${formatDate(ticket.showDate)}`,
@@ -33,8 +38,8 @@ export async function ticketManagementMenu(
   while (true) {
     printLine("Управління квитками\n");
     const choice = await askMenu([
-      "Купити квиток",
-      "Повернути квиток",
+      "Покупка квитка",
+      "Повернення квитка",
       "Квитки на виставу",
       "Квитки покупця",
       "Знайти квиток за ID",
@@ -42,7 +47,7 @@ export async function ticketManagementMenu(
 
     if (choice === 0) return;
     if (choice === 1) await buyTicket(ticketService, showService);
-    else if (choice === 2) await returnTicket(ticketService);
+    else if (choice === 2) await returnTicket(ticketService, showService);
     else if (choice === 3) await ticketsByShow(ticketService, showService);
     else if (choice === 4) await ticketsByBuyer(ticketService);
     else if (choice === 5) await findTicketById(ticketService);
@@ -53,7 +58,7 @@ async function buyTicket(
   ticketService: ITicketService,
   showService: IShowService,
 ): Promise<void> {
-  printLine("КУПИТИ КВИТОК");
+  printLine("Покупка Квитка");
 
   const shows = await showService.getUpcomingShows();
   if (shows.length === 0) {
@@ -101,14 +106,32 @@ async function buyTicket(
   }
 }
 
-async function returnTicket(ticketService: ITicketService): Promise<void> {
+async function returnTicket(
+  ticketService: ITicketService,
+  showService: IShowService,
+): Promise<void> {
   printLine("Повернення квитка\n");
+
+  const shows = await showService.getAllShows();
+  let hasActiveTickets = false;
+  for (const show of shows) {
+    const tickets = await ticketService.getTicketsByShow(show.id);
+    if (tickets.some((t) => !t.isReturned)) {
+      hasActiveTickets = true;
+      break;
+    }
+  }
+
+  if (!hasActiveTickets) {
+    printInfo("Квитків ще не куплено");
+    return;
+  }
 
   const id = await ask("Введіть ID квитка: ");
   if (!id) return;
 
   const confirm = await ask(
-    `Повернути квиток ${id.slice(0, 8)}? Буде утримано 20%. (так/ні): `,
+    `Повернути квиток ${id.slice(0, 8)}?(Буде утримано 20%). (так/ні): `,
   );
   if (confirm.toLowerCase() !== "так" && confirm.toLowerCase() !== "т") {
     printInfo("Скасовано");

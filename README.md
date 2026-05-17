@@ -1,3 +1,29 @@
+## Загальна архітектура
+
+```
+┌─────────────────────────────────────────┐
+│                  UI Layer               │
+│         (console, showScreens,          │
+│              ticketScreens)             │
+└──────────────┬──────────────────────────┘
+               │ використовує
+               │ IShowService, ITicketService
+┌──────────────▼──────────────────────────┐
+│             BLL Layer                   │
+│   (ShowService, TicketService,          │
+│    TheatreMapper, DTO)                  │
+└──────────────┬──────────────────────────┘
+               │ використовує
+               │ IUnitOfWork
+┌──────────────▼──────────────────────────┐
+│             DAL Layer                   │
+│   (UnitOfWork, TypeOrmRepository,       │
+│    DataContext, Entities)               │
+└─────────────────────────────────────────┘
+```
+
+---
+
 ## DAL — Data Access Layer
 
 ```mermaid
@@ -38,7 +64,6 @@ classDiagram
         <<interface>>
         +shows IRepository~ShowEntity~
         +tickets IRepository~TicketEntity~
-        +save() Promise~void~
     }
 
     class IUnitOfWork {
@@ -51,9 +76,8 @@ classDiagram
         +rollbackTransaction() void
     }
 
-    class GenericRepository~T~ {
-        -T[] items
-        -onChanged() void
+    class TypeOrmRepository~T~ {
+        -Repository~T~ repo
         +getAll() Promise~T[]~
         +getById(id) Promise~T~
         +create(entity) Promise~T~
@@ -63,14 +87,10 @@ classDiagram
         +findOne(predicate) Promise~T~
     }
 
-    class JsonDataContext {
-        -string dbPath
-        -DatabaseSchema data
-        -boolean isDirty
+    class DataContext {
+        -DataSource dataSource
         +shows IRepository~ShowEntity~
         +tickets IRepository~TicketEntity~
-        -loadDatabase() DatabaseSchema
-        +save() Promise~void~
     }
 
     class UnitOfWork {
@@ -83,13 +103,18 @@ classDiagram
         +rollbackTransaction() void
     }
 
-    IRepository <|.. GenericRepository
-    IDataContext <|.. JsonDataContext
+    class AppDataSource {
+        +DataSource instance
+    }
+
+    IRepository <|.. TypeOrmRepository
+    IDataContext <|.. DataContext
     IUnitOfWork <|.. UnitOfWork
-    JsonDataContext --> GenericRepository
+    DataContext --> TypeOrmRepository
+    DataContext --> AppDataSource
     UnitOfWork --> IDataContext
-    JsonDataContext ..> ShowEntity
-    JsonDataContext ..> TicketEntity
+    DataContext ..> ShowEntity
+    DataContext ..> TicketEntity
 ```
 
 ---
@@ -184,9 +209,9 @@ classDiagram
     }
 
     class TheatreMapper {
-        +toShowDto(entity) ShowDto$
-        +toShowEntity(dto) ShowEntity$
-        +toTicketDto(entity, show) TicketDto$
+        +toShowDto(entity) ShowDto
+        +toShowEntity(dto) ShowEntity
+        +toTicketDto(entity, show) TicketDto
     }
 
     IShowService <|.. ShowService

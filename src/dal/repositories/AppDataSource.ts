@@ -6,7 +6,7 @@ import * as path from "path";
 
 export const AppDataSource = new DataSource({
   type: "sqlite",
-  database: path.join(__dirname, "..", "..", "..", "data", "theatre.db"),
+  database: path.join(__dirname, "..", "..", "..", "..", "data", "theatre.db"),
   synchronize: true,
   logging: false,
   entities: [ShowEntity, TicketEntity],

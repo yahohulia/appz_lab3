@@ -93,7 +93,8 @@ export class TicketService implements ITicketService {
     if (daysUntilShow < MIN_DAYS_BEFORE_RETURN) {
       return {
         success: false,
-        error: `Квиток можна повернути не пізніше, ніж за ${MIN_DAYS_BEFORE_RETURN} дні до вистави. До вистави залишилось: ${daysUntilShow} дн.`,
+        error: `Квиток можна повернути не пізніше, ніж за ${MIN_DAYS_BEFORE_RETURN} дні до вистави.
+        До вистави залишилось: ${daysUntilShow} дн.`,
       };
     }
 

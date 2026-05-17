@@ -1,7 +1,5 @@
 {
-  "name": "theatre-app",
-  "version": "1.0.0",
-  "description": "Theatre ticket system - multi-layer architecture",
+  "name": "lab3",
   "main": "dist/src/ui/index.js",
   "scripts": {
     "build": "tsc",
