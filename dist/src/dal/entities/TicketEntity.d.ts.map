@@ -1,1 +1,0 @@
-{"version":3,"file":"TicketEntity.d.ts","sourceRoot":"","sources":["../../../../src/dal/entities/TicketEntity.ts"],"names":[],"mappings":"AAEA,qBACa,YAAY;IAEvB,EAAE,EAAE,MAAM,CAAC;IAGX,MAAM,EAAE,MAAM,CAAC;IAGf,SAAS,EAAE,MAAM,CAAC;IAGlB,UAAU,EAAE,MAAM,CAAC;IAGnB,YAAY,EAAE,MAAM,CAAC;IAGrB,SAAS,EAAE,MAAM,CAAC;IAGlB,UAAU,EAAE,OAAO,CAAC;CACrB"}
