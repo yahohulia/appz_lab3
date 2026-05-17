@@ -1,0 +1,24 @@
+{
+  "name": "theatre-app",
+  "version": "1.0.0",
+  "description": "Theatre ticket system - multi-layer architecture",
+  "main": "dist/src/ui/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node dist/src/ui/index.js",
+    "dev": "ts-node src/ui/index.ts"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.2.0",
+    "sqlite3": "^5.1.7",
+    "typeorm": "^0.3.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/sqlite3": "^3.1.11",
+    "@types/uuid": "^9.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}
